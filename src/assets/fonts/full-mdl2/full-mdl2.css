@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'Full MDL2';
+  src: url('./FullMDL2.eot'); /* IE9 Compat Modes */
+  src: url('./FullMDL2.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('./FullMDL2.woff2') format('woff2'), /* Super Modern Browsers */
+       url('./FullMDL2.woff') format('woff'), /* Pretty Modern Browsers */
+       url('./FullMDL2.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('./FullMDL2.svg') format('svg'); /* Legacy iOS */
+}
+
+.icon {
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	display: inline-block;
+	font-family: 'Full MDL2';
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	speak: none;
+}
+
+.icon-Mail:before { content: '\E715'; }
+.icon-MailSolid:before { content: '\F343'; }
+.icon-Search:before { content: '\E721'; }
+.icon-SearchMedium:before { content: '\F78B'; }
+.icon-WhatsThis:before { content: '\EC23'; }
+.icon-KeyboardClassic:before { content: '\E765'; }
+.icon-MicOn:before { content: '\EC71'; }
+.icon-HololensMic:before { content: '\F6B4'; }
+.icon-Microphone:before { content: '\E720'; }
