@@ -143,7 +143,13 @@ const SpeechToTextContextProvider = (props) => {
 	}
 
 	return (
-		<SpeechToTextContext.Provider value={{ initStt, handleMicClick, recognizerStop, recognizerSetup, resumeAudioContext }}>
+		<SpeechToTextContext.Provider value={{ 
+			initStt, 
+			handleMicClick, 
+			recognizerStop, 
+			recognizerSetup, 
+			resumeAudioContext 
+		}}>
 			{ props.children }
 		</SpeechToTextContext.Provider>
 	)

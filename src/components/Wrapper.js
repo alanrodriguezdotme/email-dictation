@@ -8,8 +8,8 @@ import VoicePanel from './VoicePanel/VoicePanel'
 import { SpeechToTextContext } from '../contexts/SpeechToTextContext'
 
 const Wrapper = () => {
-	let { currentTab, showPanel } = useContext(GlobalContext)
-	let { initStt, handleMicClick } = useContext(SpeechToTextContext)
+	let { currentTab, showPanel, utterance } = useContext(GlobalContext)
+	let { initStt, handleMicClick, recognizerStop } = useContext(SpeechToTextContext)
 
 	useEffect(() => {
 		initStt()
@@ -31,7 +31,9 @@ const Wrapper = () => {
 			<Viewport>
 				{ showPanel && 
 					<VoicePanel 
-						handleMicClick={ handleMicClick } 
+						utterance={ utterance }
+						handleMicClick={ handleMicClick }
+						recognizerStop={ recognizerStop }
 						showPanel={ showPanel } /> }
 				{ renderView() }
 				<Tabs currentTab={ currentTab } />

@@ -7,7 +7,7 @@ const GlobalContextProvider = (props) => {
 	let [ avatarState, setAvatarState ] = useState(null)
 	let [ utterance, setUtterance ] = useState(null)
 	let [ currentTab, setCurrentTab ] = useState('search')
-	let [ showPanel, setShowPanel ] = useState(true)
+	let [ showPanel, setShowPanel ] = useState(false)
 
 	return (
 		<GlobalContext.Provider value={{

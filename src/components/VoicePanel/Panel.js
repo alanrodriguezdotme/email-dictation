@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components'
 import PanelTips from './PanelTips'
 import PanelControls from './PanelControls'
 
-const Panel = ({ startExit, handleMicClick }) => {
+const Panel = ({ startExit, handleMicClick, utterance }) => {
 	useEffect(() => {
 		handleMicClick()
 	}, [])
@@ -15,7 +15,8 @@ const Panel = ({ startExit, handleMicClick }) => {
 			</Handle>
 			<Content>
 				<Title></Title>
-				<Utterance></Utterance>
+				{ utterance && 
+					<Utterance>{ utterance }</Utterance> }
 			</Content>
 			<PanelTips />
 			<PanelControls />

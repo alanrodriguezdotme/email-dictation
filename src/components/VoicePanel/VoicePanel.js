@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Overlay from './Overlay'
 import Panel from './Panel'
 
-const VoicePanel = ({ showPanel, handleMicClick }) => {
+const VoicePanel = ({ showPanel, handleMicClick, utterance, recognizerStop }) => {
 	let [ startExit, setStartExit ] = useState(false)
 
 	useEffect(() => {
@@ -12,11 +12,13 @@ const VoicePanel = ({ showPanel, handleMicClick }) => {
 
 	return (
 		<Container>
-			<Overlay 
+			<Overlay
+				recognizerStop={ recognizerStop }
 				startExit={ startExit }
 				setStartExit={ setStartExit } />
 			<Panel 
 				startExit={ startExit }
+				utterance={ utterance }
 				handleMicClick={ handleMicClick } />
 		</Container>
 	)

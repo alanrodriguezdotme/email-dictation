@@ -2,10 +2,11 @@ import React, { useContext, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { GlobalContext } from '../../contexts/GlobalContext'
 
-const Overlay = ({ startExit, setStartExit }) => {
+const Overlay = ({ startExit, setStartExit, recognizerStop }) => {
 	let { setShowPanel } = useContext(GlobalContext)
 
 	function handleOverlayClick() {
+		recognizerStop()
 		setStartExit(true)
 		setTimeout(() => {
 			setShowPanel(false)
