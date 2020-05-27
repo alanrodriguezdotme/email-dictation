@@ -2,24 +2,26 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Overlay from './Overlay'
 import Panel from './Panel'
+import Compose from '../Compose/Compose'
 
-const VoicePanel = ({ showPanel, handleMicClick, utterance, recognizerStop }) => {
+const VoicePanel = ({ data }) => {
 	let [ startExit, setStartExit ] = useState(false)
+	let { recognizerStop,	showPanel, showCompose } = data
 
 	useEffect(() => {
-
+		console.log(data.utterance)
 	}, [ showPanel ])
 
-	return (
+	return ( data && 
 		<Container>
 			<Overlay
 				recognizerStop={ recognizerStop }
 				startExit={ startExit }
 				setStartExit={ setStartExit } />
+			{ showCompose && <Compose data={ data } /> }
 			<Panel 
 				startExit={ startExit }
-				utterance={ utterance }
-				handleMicClick={ handleMicClick } />
+				data={ data } />
 		</Container>
 	)
 }

@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const PanelControls = () => {
+const PanelControls = ({ handleMicClick }) => {
 
 	function renderMicButton() {
 		return (
-			<Mic>
+			<Mic onClick={ () => handleMicClick() }>
 				<OuterCircle></OuterCircle>
 				<InnerCircle>
 					<i className="icon icon-HololensMic" />
@@ -43,6 +43,7 @@ const Button = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	font-size: 24px;
 `
 
 const Mic = styled.div`

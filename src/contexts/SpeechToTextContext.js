@@ -14,7 +14,7 @@ let audio = new AudioContext()
 export const SpeechToTextContext = createContext()
 
 const SpeechToTextContextProvider = (props) => {
-	const { setSttState, setAvatarState, setShowUtterance, setUtterance } = useContext(GlobalContext)
+	const { setSttState, setAvatarState, setUtterance, setCortanaText, resetVoice } = useContext(GlobalContext)
 
 	const initStt = () => {
 		recognizer = recognizerSetup(
@@ -74,7 +74,7 @@ const SpeechToTextContextProvider = (props) => {
 					setSttState('RecognitionTriggeredEvent')
 					setAvatarState('listening')
 					console.log("Initializing")
-					// playEarcon('listening')
+					playEarcon('listening')
 					break
 				case "ListeningStartedEvent":
 					console.log("Listening")
@@ -88,10 +88,10 @@ const SpeechToTextContextProvider = (props) => {
 					console.log(JSON.stringify(event.Result)) // check console for other information in result
 					break
 				case "SpeechHypothesisEvent":
-					setShowUtterance(true)
 					console.log(JSON.stringify(event.Result)) // check console for other information in result
 					setUtterance(event.result.Text)
 					setSttState('SpeechHypothesisEvent')
+					setCortanaText(null)
 					break
 				case "SpeechFragmentEvent":
 					console.log(JSON.stringify(event.Result)) // check console for other information in result
@@ -109,7 +109,10 @@ const SpeechToTextContextProvider = (props) => {
 					setSttState('SpeechDetailedPhraseEvent')
 					if (event.Result.NBest) {
 						console.log(event.Result.NBest[0].ITN)
+						
 						// getLuisResponse goes here
+						actions.getLuisData(JSON.stringify(event.result.NBest[0].ITN), actions)
+
 					} else {
 						setAvatarState('calm')
 					}
@@ -123,14 +126,12 @@ const SpeechToTextContextProvider = (props) => {
 			}
 		})
 		.On(() => {
-			setSttState(null)
-			setUtterance(null)
+			resetVoice()
 		},
 		(error) => {
 			error && console.error('STT error', error)
 			initStt()
-			setSttState(null)
-			setUtterance(null)
+			resetVoice()
 		})
 	}
 
@@ -140,6 +141,7 @@ const SpeechToTextContextProvider = (props) => {
 		} else {
 			initStt()
 		}
+		resetVoice()
 	}
 
 	return (

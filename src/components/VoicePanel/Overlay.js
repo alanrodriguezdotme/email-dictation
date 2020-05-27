@@ -15,9 +15,8 @@ const Overlay = ({ startExit, setStartExit, recognizerStop }) => {
 	
 	return (
 		<Container 
-			className={ startExit && 'off'}
+			className={ startExit && 'off' }
 			onClick={() => handleOverlayClick() }>
-			
 		</Container>
 	)
 }
@@ -41,6 +40,8 @@ const Container = styled.div`
 	z-index: 1;
 	animation: ${ animateIn } 350ms cubic-bezier(0.16, 1, 0.3, 1);
 	animation-fill-mode: forwards;
+	opacity: 1;
+	transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1);
 
 	&.off {
 		animation: ${ animateOut } 400ms cubic-bezier(0.16, 1, 0.3, 1);

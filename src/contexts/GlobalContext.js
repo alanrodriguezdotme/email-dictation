@@ -8,6 +8,17 @@ const GlobalContextProvider = (props) => {
 	let [ utterance, setUtterance ] = useState(null)
 	let [ currentTab, setCurrentTab ] = useState('search')
 	let [ showPanel, setShowPanel ] = useState(false)
+	let [ cortanaText, setCortanaText ] = useState("What do you want to do?")
+	let [ luisData, setLuisData ] = useState(null)
+	let [ showCompose, setShowCompose ] = useState(false)
+
+	const resetVoice = () => {
+		setCortanaText("What do you want to do today?")
+		setUtterance(null)
+		setAvatarState(null)
+		setSttState(null)
+		setLuisData(null)
+	}
 
 	return (
 		<GlobalContext.Provider value={{
@@ -15,7 +26,11 @@ const GlobalContextProvider = (props) => {
 			avatarState, setAvatarState,
 			utterance, setUtterance,
 			currentTab, setCurrentTab,
-			showPanel, setShowPanel
+			showPanel, setShowPanel,
+			cortanaText, setCortanaText,
+			luisData, setLuisData,
+			showCompose, setShowCompose,
+			resetVoice
 		}}>
 			{ props.children }
 		</GlobalContext.Provider>

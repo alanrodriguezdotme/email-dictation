@@ -1,12 +1,25 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import styled, { keyframes } from 'styled-components'
 import PanelTips from './PanelTips'
 import PanelControls from './PanelControls'
+import { LuisContext } from '../../contexts/LuisContext'
 
-const Panel = ({ startExit, handleMicClick, utterance }) => {
+const Panel = ({ data, startExit }) => {
+	let { handleMicClick, utterance, cortanaText, recognizerStop } = data
+
 	useEffect(() => {
-		handleMicClick()
+		handleMicClick(data)
 	}, [])
+
+	function renderContent() {
+		if (utterance && utterance.length > 0) { 
+			return <Utterance>{ utterance }</Utterance> 
+		} else if (cortanaText) { 
+			return <CortanaText>{ cortanaText }</CortanaText> 
+		}	else { 
+			return <PanelTips /> 
+		}
+	}
 
 	return (
 		<Container className={ startExit && 'off' }>
@@ -14,12 +27,11 @@ const Panel = ({ startExit, handleMicClick, utterance }) => {
 				<div className="pill" />
 			</Handle>
 			<Content>
-				<Title></Title>
-				{ utterance && 
-					<Utterance>{ utterance }</Utterance> }
+				{ renderContent() }
 			</Content>
-			<PanelTips />
-			<PanelControls />
+			<PanelControls 
+				handleMicClick={ handleMicClick }
+				recognizerStop={ recognizerStop } />
 		</Container>
 	)
 }
@@ -27,24 +39,24 @@ const Panel = ({ startExit, handleMicClick, utterance }) => {
 export default Panel
 
 const animateIn = keyframes`
-	0% { transform: translateY(285px); }
+	0% { transform: translateY(200px); }
 	100% { transform: translateY(0); }
 `
 
 const animateOut = keyframes`
 	0% { transform: translateY(0); }
-	100% { transform: translateY(285px); }
+	100% { transform: translateY(200px); }
 `
 
 const Container = styled.div`
 	position: absolute;
 	width: 100%;
-	height: 285px;
+	height: 200px;
 	border-radius: 14px 14px 0 0;
 	background-color: #fff;
 	bottom: 0;
-	z-index: 2;
-	box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.8);
+	z-index: 100;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14);
 	display: flex;
 	flex-direction: column;
 	transition: height 275ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -76,12 +88,19 @@ const Content = styled.div`
 	display: flex; 
 	flex-direction: column;
 	flex: 1;
-`
-
-const Title = styled.div`
-
+	/* align-items: center; */
+	justify-content: flex-end;
 `
 
 const Utterance = styled.div`
+	width: 100%;
+	text-align: center;
+	padding: 12px;
+`
 
+const CortanaText = styled.div`
+	width: 100%;
+	text-align: center;
+	padding: 12px;
+	font-weight: bold;
 `
