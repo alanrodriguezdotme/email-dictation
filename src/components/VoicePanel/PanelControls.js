@@ -1,17 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 
-const PanelControls = ({ handleMicClick }) => {
+const PanelControls = ({ data }) => {
+	let { handleMicClick, sttState, recognizerStop, focus, initStt } = data
 
 	function renderMicButton() {
 		return (
-			<Mic onClick={ () => handleMicClick() }>
+			<Mic onClick={ () => handleMicButtonClick() }>
 				<OuterCircle></OuterCircle>
-				<InnerCircle>
+				<InnerCircle micOn={ sttState != null ? true : false }>
 					<i className="icon icon-HololensMic" />
 				</InnerCircle>
 			</Mic>
 		)
+	}
+
+	function handleMicButtonClick() {
+		if (sttState != null) { recognizerStop() }
+		else {
+			if (focus === 'body') {
+				recognizerStop(true)
+				initStt(true)
+				handleMicClick(data, true)
+			} else {
+				handleMicClick(data, true)
+			}
+		} 
 	}
 
 	return (
@@ -68,9 +82,9 @@ const InnerCircle = styled.div`
 	z-index: 2;
 	width: 52px;
 	height: 52px;
-	background-color: #0078d4;
+	background-color: ${ p => p.micOn ? '#0078d4' : '#fff' };
 	border-radius: 26px;
-	color: #fff;
+	color: ${ p => p.micOn ? '#fff' : '#0078d4' };
 	display: flex;
 	align-items: center;
 	justify-content: center;

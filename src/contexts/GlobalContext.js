@@ -11,9 +11,11 @@ const GlobalContextProvider = (props) => {
 	let [ cortanaText, setCortanaText ] = useState("What do you want to do?")
 	let [ luisData, setLuisData ] = useState(null)
 	let [ showCompose, setShowCompose ] = useState(false)
+	let [ focus, setFocus ] = useState(null)
+	let [ recipients, setRecipients ] = useState([])
 
 	const resetVoice = () => {
-		setCortanaText("What do you want to do today?")
+		setCortanaText(null)
 		setUtterance(null)
 		setAvatarState(null)
 		setSttState(null)
@@ -30,6 +32,8 @@ const GlobalContextProvider = (props) => {
 			cortanaText, setCortanaText,
 			luisData, setLuisData,
 			showCompose, setShowCompose,
+			focus, setFocus,
+			recipients, setRecipients,
 			resetVoice
 		}}>
 			{ props.children }

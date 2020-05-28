@@ -18,7 +18,9 @@ const VoicePanel = ({ data }) => {
 				recognizerStop={ recognizerStop }
 				startExit={ startExit }
 				setStartExit={ setStartExit } />
-			{ showCompose && <Compose data={ data } /> }
+			{ showCompose && 
+			  // data.luisData && 
+				<Compose data={ data } /> }
 			<Panel 
 				startExit={ startExit }
 				data={ data } />

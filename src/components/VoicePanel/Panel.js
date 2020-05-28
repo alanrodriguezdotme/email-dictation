@@ -5,11 +5,15 @@ import PanelControls from './PanelControls'
 import { LuisContext } from '../../contexts/LuisContext'
 
 const Panel = ({ data, startExit }) => {
-	let { handleMicClick, utterance, cortanaText, recognizerStop } = data
+	let { handleMicClick, utterance, cortanaText, recognizerStop, sttState } = data
 
 	useEffect(() => {
 		handleMicClick(data)
 	}, [])
+
+	useEffect(() => {
+		console.log(utterance)
+	}, [ utterance ])
 
 	function renderContent() {
 		if (utterance && utterance.length > 0) { 
@@ -30,8 +34,7 @@ const Panel = ({ data, startExit }) => {
 				{ renderContent() }
 			</Content>
 			<PanelControls 
-				handleMicClick={ handleMicClick }
-				recognizerStop={ recognizerStop } />
+				data={ data } />
 		</Container>
 	)
 }

@@ -1,5 +1,7 @@
 import React, { createContext, useContext } from 'react'
 import * as SDK from 'microsoft-speech-browser-sdk'
+import listeningEarcon from '../assets/earcons/earcon-listening.wav'
+import stopEarcon from '../assets/earcons/earcon-stoplistening.wav'
 
 import { GlobalContext } from './GlobalContext'
 
@@ -16,10 +18,10 @@ export const SpeechToTextContext = createContext()
 const SpeechToTextContextProvider = (props) => {
 	const { setSttState, setAvatarState, setUtterance, setCortanaText, resetVoice } = useContext(GlobalContext)
 
-	const initStt = () => {
+	const initStt = (dictation) => {
 		recognizer = recognizerSetup(
 			SDK,
-			SDK.RecognitionMode.Interactive,
+			dictation ? SDK.RecognitionMode.Dictation : SDK.RecognitionMode.Interactive,
 			'en-US',
 			'Detailed',
 			subscriptionKey
@@ -48,10 +50,14 @@ const SpeechToTextContextProvider = (props) => {
 	}
 
 	const playEarcon = (state) => {
-		if (audio.state != 'suspended') {
-			let audio = new Audio('assets/earcons/earcon-' + state + '.wav')
-			audio.play()
+		let earcon
+		if (state === 'on') {
+			earcon = new Audio(listeningEarcon)
+		} else {
+			earcon = new Audio(stopEarcon)
 		}
+
+		earcon.play()
 	}
 
 	const handleMicClick = (actions, shouldSkipLuis) => {
@@ -74,7 +80,7 @@ const SpeechToTextContextProvider = (props) => {
 					setSttState('RecognitionTriggeredEvent')
 					setAvatarState('listening')
 					console.log("Initializing")
-					playEarcon('listening')
+					playEarcon('on')
 					break
 				case "ListeningStartedEvent":
 					console.log("Listening")
@@ -109,16 +115,18 @@ const SpeechToTextContextProvider = (props) => {
 					setSttState('SpeechDetailedPhraseEvent')
 					if (event.Result.NBest) {
 						console.log(event.Result.NBest[0].ITN)
-						
-						// getLuisResponse goes here
-						actions.getLuisData(JSON.stringify(event.result.NBest[0].ITN), actions)
-
+						setUtterance(event.Result.NBest[0].ITN)
+						if (!skipLuis) {
+							// getLuisResponse goes here
+							actions.getLuisData(JSON.stringify(event.result.NBest[0].ITN), actions)
+						}
 					} else {
 						setAvatarState('calm')
 					}
 					break
 				case "RecognitionEndedEvent":
-					setSttState('RecognitionEndedEvent')
+					setSttState(null)
+					playEarcon()
 					if (event.Result.NBest) {
             console.log(event.Result.NBest[0].ITN)
 					}
@@ -126,21 +134,21 @@ const SpeechToTextContextProvider = (props) => {
 			}
 		})
 		.On(() => {
-			resetVoice()
+			// resetVoice()
 		},
 		(error) => {
 			error && console.error('STT error', error)
-			initStt()
 			resetVoice()
+			initStt()
 		})
 	}
 
 	const recognizerStop = (reset) => {
-		if (recognizer) {
+		if (reset) {
+			recognizer = null
+		} else if (recognizer) {
 			recognizer.AudioSource.TurnOff()
-		} else {
-			initStt()
-		}
+		} 
 		resetVoice()
 	}
 

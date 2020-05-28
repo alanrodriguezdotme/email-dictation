@@ -9,9 +9,29 @@ import { SpeechToTextContext } from '../contexts/SpeechToTextContext'
 import { LuisContext } from '../contexts/LuisContext'
 
 const Wrapper = () => {
-	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, showCompose, setShowCompose, luisData } = useContext(GlobalContext)
+	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setRecipients } = useContext(GlobalContext)
 	let { initStt, handleMicClick, recognizerStop } = useContext(SpeechToTextContext)
 	let { getLuisData } = useContext(LuisContext)
+	let data = {
+		utterance,
+		setUtterance,
+		handleMicClick, 
+		recognizerStop,
+		showPanel,
+		cortanaText, 
+		setCortanaText,
+		setSttState,
+		sttState,
+		showCompose, 
+		setShowCompose,
+		luisData,
+		getLuisData,
+		focus, 
+		setFocus, 
+		recipients, 
+		setRecipients,
+		initStt
+	}
 
 	useEffect(() => {
 		initStt()
@@ -32,21 +52,7 @@ const Wrapper = () => {
 		<Container>
 			<Viewport>
 				{ showPanel && 
-					<VoicePanel 
-						data={{ 
-							utterance,
-							setUtterance,
-							handleMicClick, 
-							recognizerStop,
-							showPanel,
-							cortanaText, 
-							setCortanaText,
-							sttState,
-							showCompose, 
-							setShowCompose,
-							luisData,
-							getLuisData
-						}} /> }
+					<VoicePanel data={ data } /> }
 				{ renderView() }
 				<Tabs currentTab={ currentTab } />
 			</Viewport>
@@ -73,4 +79,9 @@ const Viewport = styled.div`
 	display: flex;
 	flex-direction: column;
 	position: relative;
+
+	@media only screen and (max-width: 420px) { 
+		width: 100%;
+		height: 100%;
+	}
 `

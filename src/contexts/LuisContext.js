@@ -51,7 +51,15 @@ const LuisContextProvider = (props) => {
 			case 'Email.SendEmail':
 				actions.setShowCompose(true)
 				actions.setUtterance(null)
+				actions.setFocus('body')
+				actions.recognizerStop(true)
+				actions.initStt(true)
+				actions.handleMicClick(actions)
 				actions.setCortanaText("What's your message?")
+
+				if (entities) {
+					actions.setRecipients(entities["Email.ContactName"])
+				}
 				break
 
 			default:

@@ -1,25 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
 import header from '../../assets/compose-header.png'
+import ComposeBody from './ComposeBody'
 
 const Compose = ({ data }) => {
-	let [ names, setNames ] = useState(data.luisData.prediction.entities['Email.ContactName'])
-	let [ bodyText, setBodyText ] = useState('')
+	let { setFocus, focus, setCortanaText, sttState, utterance, recipients=['jonathon', 'catherine'] } = data
 	let [ subjectText, setSubjectText ] = useState('')
+	let [ toText, setToText ] = useState('')
 
-	function renderNames() {
+	useEffect(() => {		
+		if (sttState != null && utterance != null && focus === 'subject') {
+			setSubjectText(utterance)
+		}
+	}, [sttState, utterance])
+
+	function renderNames(names) {
+		let surnames = ['Brill', 'Fielder', 'Atkins', 'Larsson']
 		return names.map((name, i) => {
 			let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1)
-			return <Name key={ 'name' + i }>{ capitalizedName }</Name>
+			return <Name key={ 'name' + i }>{ capitalizedName + ' ' + surnames[i] }</Name>
 		})
-	}
-
-	function handleBodyTextChange(event) {
-		setBodyText(event.target.value)
 	}
 
 	function handleSubjectTextChange(event) {
 		setSubjectText(event.target.value)
+	}
+
+	function handleToTextChange(event) {
+		setToText(event.target.value)
+	}
+
+	function handleToFocus(event) {
+		setFocus('to')
+		setCortanaText('Who is this for?')
+	}
+
+	function handleSubjectFocus(event) {
+		setFocus('subject')
+		setCortanaText('Who is this about?')
 	}
 
 	return (
@@ -29,17 +47,20 @@ const Compose = ({ data }) => {
 			</Header>
 			<To>
 				<Label>To:</Label>
-				<Names>{ names && renderNames() }</Names>				
+				{ recipients && <Names>{ renderNames(recipients) }</Names>	}
+				<input type="text" 
+					value={ toText } 
+					onChange={ handleToTextChange }
+					onFocus={ handleToFocus }  />
 			</To>
 			<Subject>
 				<Label>Subject:</Label>
-				<input type="text" value={ subjectText } onChange={ handleSubjectTextChange } />
+				<input type="text" 
+					value={ subjectText } 
+					onChange={ handleSubjectTextChange }
+					onFocus={ handleSubjectFocus } />
 			</Subject>
-			<Body>
-				<BodyText 
-					value={ bodyText } 
-					onChange={ handleBodyTextChange } />
-			</Body>
+			<ComposeBody data={ data } />
 		</Container>
 	)
 }
@@ -78,6 +99,13 @@ const To = styled.div`
 	width: 100%;
 	height: 44px;
 	border-bottom: 1px solid #e1e1e1;
+
+	input[type="text"] {
+		border: 0;
+		width: 100%;
+		height: 100%;
+		outline: none;
+	}
 `
 
 const Subject = styled.div`
@@ -92,11 +120,6 @@ const Subject = styled.div`
 		height: 100%;
 		outline: none;
 	}
-`
-
-const Body = styled.div`
-	flex: 1;
-	width: 100%;
 `
 
 const Label = styled.div`
@@ -123,14 +146,6 @@ const Name = styled.div`
 	justify-content: center;
 	font-size: 15px;
 	border-radius: 3px;
-`
-
-const BodyText = styled.textarea`
-	width: 100%;
-	height: 100%;
-	padding: 12px;
-	font-size: 15px;
-	color: #333;
-	outline: none;
-	border: 0;
+	height: 22px;
+	white-space: nowrap;
 `
