@@ -10,7 +10,8 @@ const Compose = ({ data }) => {
 
 	useEffect(() => {		
 		if (sttState != null && utterance != null && focus === 'subject') {
-			setSubjectText(utterance)
+			let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1)
+			setSubjectText(scrubbedUtterance)
 		}
 	}, [sttState, utterance])
 

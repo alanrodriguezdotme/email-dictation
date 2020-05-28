@@ -13,7 +13,8 @@ const ComposeBody = ({ data }) => {
 	useEffect(() => {
 		console.log(focus, utterance)
 		if (focus === 'body' && utterance) {
-			setBodyText(bodyText + ' ' + utterance)
+			let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
+			setBodyText(bodyText + scrubbedUtterance)
 		}
 	}, [utterance])
 
