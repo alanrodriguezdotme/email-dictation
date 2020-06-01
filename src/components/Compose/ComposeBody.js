@@ -1,22 +1,71 @@
 import React, { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
+import ReactQuill from 'react-quill'
 
 const ComposeBody = ({ data }) => {
 	const { setFocus, setCortanaText, focus, utterance } = data
 	const bodyRef = useRef(null)
 	let [ bodyText, setBodyText ] = useState('')
+	let [ utterances, setUtterances ] = useState([])
 
 	useEffect(() => {
 		console.log()
 	}, [bodyRef])
 
 	useEffect(() => {
-		console.log(focus, utterance)
+		console.log({focus, utterance, bodyText})
 		if (focus === 'body' && utterance) {
-			let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
-			setBodyText(bodyText + scrubbedUtterance)
+			let utterancesMinusLastOne = [...utterances].slice(0, -1)
+
+			switch (checkForCommand(utterance)) {
+				case 'delete':
+					setUtterances(utterancesMinusLastOne)
+					setBodyText(utterancesMinusLastOne.join(''))
+					break
+				case 'bold':
+					utterancesMinusLastOne.push('<strong>' + [...utterances].splice(-1, 1) + '</strong>')
+					setUtterances(utterancesMinusLastOne)
+					setBodyText([ ...utterancesMinusLastOne ].join(''))
+					break
+				case 'italicize':
+					utterancesMinusLastOne.push('<i>' + [...utterances].splice(-1, 1) + '</i>')
+					setUtterances(utterancesMinusLastOne)
+					setBodyText([ ...utterancesMinusLastOne ].join(''))
+					break
+				default:					
+					let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
+					setUtterances([ ...utterances, scrubbedUtterance ])
+					setBodyText([ ...utterances, scrubbedUtterance ].join(''))
+			}
 		}
 	}, [utterance])
+
+	function checkForCommand(string) {
+		const deleteCommands = [
+			'delete',
+			'undo'
+		]
+
+		const boldCommands = [
+			'bold that',
+			'bold this',
+			'bold'
+		]
+
+		const italicizeCommands = [
+			'italicize'
+		]
+
+		if (new RegExp(deleteCommands.join('|')).test(string)) {
+			return 'delete'
+		} else if (new RegExp(boldCommands.join('|')).test(string)) {
+			return 'bold'
+		} else if (new RegExp(italicizeCommands.join('|')).test(string)) {
+			return 'italicize'
+		} else {
+			return null
+		}
+	}
 
 	function handleFocus() {
 		setFocus('body')
@@ -24,16 +73,23 @@ const ComposeBody = ({ data }) => {
 	}
 
 	function handleBodyTextChange(event) {
+		console.log(event)
 		setBodyText(event.target.value)
 	}
 
 	return (
 		<Container>
-			<textarea 
+			<ReactQuill 
+				ref={ bodyRef }
+				value={ bodyText }
+				modules={{ toolbar: false }}
+				onChange={ setBodyText }
+				onFocus={ handleFocus } />
+			{/* <textarea 
 				ref={ bodyRef }
 				value={ bodyText }
 				onChange={ handleBodyTextChange }
-				onFocus={ () => handleFocus() } />
+				onFocus={ () => handleFocus() } /> */}
 		</Container>
 	)
 }
