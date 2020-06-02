@@ -20,7 +20,6 @@ const LuisContextProvider = (props) => {
 					return response.json()
 				})
 				.then((data) => {
-					console.log(data)
 					setLuisData(data)
 					let intent = data.prediction.topIntent
 					let { score } = data.prediction.intents[intent]
@@ -30,7 +29,7 @@ const LuisContextProvider = (props) => {
 						console.log({ intent, score, entities })
 
 						//check and see if we confidently know the intent, otherwise it is freeform text.
-						if (score > .6) {
+						if (score > .8) {
 							handleIntent(intent, entities, actions)
 						}
 					}
@@ -49,18 +48,25 @@ const LuisContextProvider = (props) => {
 	const handleIntent = (intent, entities, actions) => {
 		switch(intent) {
 			case 'Email.SendEmail':
-				actions.setShowCompose(true)
-				actions.setUtterance(null)
-				actions.setFocus('body')
-				actions.recognizerStop(true)
-				actions.initStt(true)
-				actions.handleMicClick(actions)
-				actions.setCortanaText("What's your message?")
+				if (actions.focus === null) {					
+					actions.setShowCompose(true)
+					actions.setUtterance(null)
+					actions.setFocus('body')
+					actions.recognizerStop(true)
+					actions.initStt(true)
+					actions.handleMicClick(actions)
+					actions.setCortanaText("What's your message?")
 
-				if (entities) {
-					actions.setRecipients(entities["Email.ContactName"])
+					if (entities["Email.ContactName"]) {
+						actions.setRecipients(entities["Email.ContactName"])
+					}
 				}
 				break
+			
+			case 'Email.AddRecipient':
+				let newRecipients = [ ...actions.recipients ].concat(entities["Email.ContactName"])
+				console.log({ recipients: actions.recipients, entities: entities["Email.ContactName"], newRecipients })
+				actions.setRecipients(entities["Email.ContactName"])
 
 			default:
 				console.log('no actions found for this intent: ' + intent)

@@ -5,10 +5,10 @@ import PanelControls from './PanelControls'
 import { LuisContext } from '../../contexts/LuisContext'
 
 const Panel = ({ data, startExit }) => {
-	let { handleMicClick, utterance, cortanaText, recognizerStop, sttState } = data
+	let { handleMicClick, utterance, cortanaText, recognizerStop, sttState, focus } = data
 
 	useEffect(() => {
-		handleMicClick(data)
+		handleMicClick(data, focus === 'body')
 	}, [])
 
 	useEffect(() => {

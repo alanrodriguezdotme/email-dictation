@@ -4,9 +4,15 @@ import header from '../../assets/compose-header.png'
 import ComposeBody from './ComposeBody'
 
 const Compose = ({ data }) => {
-	let { setFocus, focus, setCortanaText, sttState, utterance, recipients=['jonathon', 'catherine'] } = data
+	let { setFocus, focus, setCortanaText, sttState, utterance, recipients } = data
 	let [ subjectText, setSubjectText ] = useState('')
 	let [ toText, setToText ] = useState('')
+	let [ recipientNames, setRecipientNames ] = useState([])
+
+	useEffect(() => {
+		let newRecipientNames = recipientNames.concat(recipients)
+		setRecipientNames(newRecipientNames)
+	}, [recipients])
 
 	useEffect(() => {		
 		if (sttState != null && utterance != null && focus === 'subject') {
@@ -16,11 +22,19 @@ const Compose = ({ data }) => {
 	}, [sttState, utterance])
 
 	function renderNames(names) {
-		let surnames = ['Brill', 'Fielder', 'Atkins', 'Larsson']
+		let surnames = ['Carson', 'Patel', 'Santos', 'Larsson', 'Ngyuen', 'Darling', 'Baskins']
+		console.log(names)
 		return names.map((name, i) => {
-			let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1)
-			return <Name key={ 'name' + i }>{ capitalizedName + ' ' + surnames[i] }</Name>
+			if (name.indexOf(' ') >= 0) {
+				return <Name key={ 'name' + i }>{ capitalize(name) }</Name>
+			} else {
+				return <Name key={ 'name' + i }>{ capitalize(name) + ' ' + surnames[i] }</Name>
+			}
 		})
+	}
+
+	function capitalize(str) {
+		return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 	}
 
 	function handleSubjectTextChange(event) {
@@ -48,7 +62,7 @@ const Compose = ({ data }) => {
 			</Header>
 			<To>
 				<Label>To:</Label>
-				{ recipients && <Names>{ renderNames(recipients) }</Names>	}
+				{ recipientNames && <Names>{ renderNames(recipientNames) }</Names>	}
 				<input type="text" 
 					value={ toText } 
 					onChange={ handleToTextChange }
