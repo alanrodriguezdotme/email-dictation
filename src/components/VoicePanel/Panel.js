@@ -8,7 +8,9 @@ const Panel = ({ data, startExit }) => {
 	let { handleMicClick, utterance, cortanaText, recognizerStop, sttState, focus } = data
 
 	useEffect(() => {
-		handleMicClick(data, focus === 'body')
+		// if (sttState === null) {
+			handleMicClick(data, focus === 'body')
+		// }
 	}, [])
 
 	useEffect(() => {

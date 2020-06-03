@@ -74,48 +74,37 @@ const SpeechToTextContextProvider = (props) => {
   }
 
 	const recognizerStart = (SDK, recognizer, actions) => {
-		recognizer.Recognize((event) => {
+		recognizer.Recognize((event) => {			
+			console.log(event.Name)
+			setSttState(event.Name)
 			switch (event.Name) {
 				case "RecognitionTriggeredEvent":
-					setSttState('RecognitionTriggeredEvent')
-					setAvatarState('listening')
-					console.log("Initializing")
 					playEarcon('on')
 					break
 				case "ListeningStartedEvent":
-					console.log("Listening")
-					setSttState('ListeningStartedEvent')
 					break
 				case "RecognitionStartedEvent":
-					console.log("Listening_Recognizing")
 					break
 				case "SpeechStartDetectedEvent":
-					console.log("Listening_DetectedSpeech_Recognizing")
-					console.log(JSON.stringify(event.Result)) // check console for other information in result
+					// console.log(JSON.stringify(event.Result)) // check console for other information in result
 					break
 				case "SpeechHypothesisEvent":
-					console.log(JSON.stringify(event.Result)) // check console for other information in result
-					setUtterance(event.result.Text)
-					setSttState('SpeechHypothesisEvent')
-					setCortanaText(null)
+					// console.log(JSON.stringify(event.Result)) // check console for other information in result
 					break
 				case "SpeechFragmentEvent":
-					console.log(JSON.stringify(event.Result)) // check console for other information in result
+					console.log("SpeechFragmentEvent: ", event.Result) // check console for other information in result
+					setUtterance(event.Result.Text)
 					break
 				case "SpeechEndDetectedEvent":
-					console.log("Processing_Adding_Final_Touches")
-					console.log(JSON.stringify(event.Result)) // check console for other information in result
-					// playEarcon('stoplistening')
-					setSttState('SpeechEndDetectedEvent')
-					setAvatarState('thinking')
+					// console.log(JSON.stringify(event.Result)) // check console for other information in result
 					break
 				case "SpeechSimplePhraseEvent":
 					break
 				case "SpeechDetailedPhraseEvent":
-					setSttState('SpeechDetailedPhraseEvent')
+					console.log("SpeechDetailedPhraseEvent: ", event.Result)
 					if (event.Result.NBest) {
-						console.log(event.Result.NBest[0].ITN)
-						setUtterance(event.Result.NBest[0].ITN)
+						// console.log(event.Result.NBest[0].ITN)
+						// setUtterance(event.Result.NBest[0].ITN)
 						if (!skipLuis) {
 							// getLuisResponse goes here
 							actions.getLuisData(JSON.stringify(event.result.NBest[0].ITN), actions)
@@ -128,7 +117,7 @@ const SpeechToTextContextProvider = (props) => {
 					setSttState(null)
 					playEarcon()
 					if (event.Result.NBest) {
-            console.log(event.Result.NBest[0].ITN)
+            // console.log(event.Result.NBest[0].ITN)
 					}
 					break
 			}

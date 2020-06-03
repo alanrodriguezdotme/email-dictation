@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import ReactQuill from 'react-quill'
 
 const ComposeBody = ({ data }) => {
-	const { setFocus, setCortanaText, focus, utterance, setRecipients, recipients, luisData } = data
+	const { setFocus, setCortanaText, focus, utterance, setRecipients, recipients, luisData, sttState } = data
 	const bodyRef = useRef(null)
 	let [ bodyText, setBodyText ] = useState('')
 	let [ utterances, setUtterances ] = useState([])
@@ -14,10 +14,15 @@ const ComposeBody = ({ data }) => {
 
 	useEffect(() => {
 		console.log({focus, utterance, bodyText})
-		if (focus === 'body' && utterance) {			
-			commandActions(utterance)
+		if (focus === 'body' && utterance) {
+			if (sttState === 'SpeechDetailedPhraseEvent') {
+				commandActions(utterance)
+			} else if (sttState === 'SpeechFragmentEvent') {
+				let string = utterances.join('')
+				setBodyText(string + ' ' + utterance)
+			}
 		}
-	}, [utterance])
+	}, [utterance, sttState])
 
 	function commandActions(utterance) {
 		let utterancesMinusLastOne = [...utterances].slice(0, -1)
@@ -38,6 +43,7 @@ const ComposeBody = ({ data }) => {
 				setBodyText([ ...utterancesMinusLastOne ].join(''))
 				break
 			case 'add':
+				setBodyText([...utterances].join(''))
 				break
 			default:					
 				let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
@@ -47,38 +53,52 @@ const ComposeBody = ({ data }) => {
 	}
 
 	function checkForCommand(string) {
-		const deleteCommands = [
-			'delete',
-			'undo'
-		]
+		// const deleteCommands = [
+		// 	'delete',
+		// 	'undo'
+		// ]
 
-		const boldCommands = [
-			'bold that',
-			'bold this',
-			'bold'
-		]
+		// const boldCommands = [
+		// 	'bold that',
+		// 	'bold this',
+		// 	'bold'
+		// ]
 
-		const italicizeCommands = [
-			'italicize'
-		]
+		// const italicizeCommands = [
+		// 	'italicize'
+		// ]
 
-		const addRecipientCommands = [
-			'add'
-		]
+		// const addRecipientCommands = [
+		// 	'add'
+		// ]
 
-		if (new RegExp(deleteCommands.join('|')).test(string)) {
+		if (string.startsWith('delete')) {
 			return 'delete'
-		} else if (new RegExp(boldCommands.join('|')).test(string)) {
+		} else if (string.startsWith('bold')) {
 			return 'bold'
-		} else if (new RegExp(italicizeCommands.join('|')).test(string)) {
+		} else if (string.startsWith('italicize') || string.startsWith('italics')) {
 			return 'italicize'
-		} else if (new RegExp(addRecipientCommands.join('|')).test(string)) {
+		} else if (string.startsWith('add')) {
 			if (luisData && luisData.prediction.topIntent != 'Email.AddRecipient') {
 				return 'add'
 			}
 		} else {
-			return null
+			 return null
 		}
+
+		// if (new RegExp(deleteCommands.join('|')).test(string)) {
+		// 	return 'delete'
+		// } else if (new RegExp(boldCommands.join('|')).test(string)) {
+		// 	return 'bold'
+		// } else if (new RegExp(italicizeCommands.join('|')).test(string)) {
+		// 	return 'italicize'
+		// } else if (new RegExp(addRecipientCommands.join('|')).test(string)) {
+		// 	if (luisData && luisData.prediction.topIntent != 'Email.AddRecipient') {
+		// 		return 'add'
+		// 	}
+		// } else {
+		// 	return null
+		// }
 	}
 
 	function handleFocus() {
