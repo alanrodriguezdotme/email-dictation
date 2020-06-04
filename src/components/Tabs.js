@@ -34,6 +34,7 @@ const Container = styled.div`
 	height: 50px;
 	display: flex;
 	background: #f8f8f8;
+	z-index: 3;
 `
 
 const Tab = styled.div`

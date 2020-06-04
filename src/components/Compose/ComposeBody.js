@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ReactQuill from 'react-quill'
+import * as _ from 'underscore'
 
 const ComposeBody = ({ data }) => {
-	const { setFocus, setCortanaText, focus, utterance, setRecipients, recipients, luisData, sttState } = data
+	const { setFocus, setCortanaText, focus, utterance, setHeardCommandText, setRecipients, recipients, luisData, sttState } = data
 	const bodyRef = useRef(null)
 	let [ bodyText, setBodyText ] = useState('')
 	let [ utterances, setUtterances ] = useState([])
@@ -29,21 +30,26 @@ const ComposeBody = ({ data }) => {
 
 		switch (checkForCommand(utterance)) {
 			case 'delete':
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
 				setUtterances(utterancesMinusLastOne)
-				setBodyText(utterancesMinusLastOne.join(''))
+				setBodyText([ ...utterancesMinusLastOne ].join(''))
 				break
 			case 'bold':
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
 				utterancesMinusLastOne.push('<strong>' + [...utterances].splice(-1, 1) + '</strong>')
 				setUtterances(utterancesMinusLastOne)
 				setBodyText([ ...utterancesMinusLastOne ].join(''))
 				break
 			case 'italicize':
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
 				utterancesMinusLastOne.push('<i>' + [...utterances].splice(-1, 1) + '</i>')
 				setUtterances(utterancesMinusLastOne)
 				setBodyText([ ...utterancesMinusLastOne ].join(''))
 				break
 			case 'add':
-				setBodyText([...utterances].join(''))
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
+				setUtterances(utterances)
+				setBodyText(utterances.join(''))
 				break
 			default:					
 				let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
@@ -79,9 +85,7 @@ const ComposeBody = ({ data }) => {
 		} else if (string.startsWith('italicize') || string.startsWith('italics')) {
 			return 'italicize'
 		} else if (string.startsWith('add')) {
-			if (luisData && luisData.prediction.topIntent != 'Email.AddRecipient') {
-				return 'add'
-			}
+			return 'add' 
 		} else {
 			 return null
 		}

@@ -52,7 +52,7 @@ const Compose = ({ data }) => {
 
 	function handleSubjectFocus(event) {
 		setFocus('subject')
-		setCortanaText('Who is this about?')
+		setCortanaText('What is this about?')
 	}
 
 	return (
@@ -63,10 +63,10 @@ const Compose = ({ data }) => {
 			<To>
 				<Label>To:</Label>
 				{ recipientNames && <Names>{ renderNames(recipientNames) }</Names>	}
-				<input type="text" 
+				{/* <input type="text" 
 					value={ toText } 
 					onChange={ handleToTextChange }
-					onFocus={ handleToFocus }  />
+					onFocus={ handleToFocus }  /> */}
 			</To>
 			<Subject>
 				<Label>Subject:</Label>
@@ -112,8 +112,10 @@ const Header = styled.div`
 const To = styled.div`
 	display: flex;
 	width: 100%;
-	height: 44px;
+	min-height: 44px;
 	border-bottom: 1px solid #e1e1e1;
+	align-items: flex-start;
+	padding: 8px 0;
 
 	input[type="text"] {
 		border: 0;
@@ -128,6 +130,7 @@ const Subject = styled.div`
 	width: 100%;
 	height: 44px;
 	border-bottom: 1px solid #e1e1e1;
+	padding: 8px 0;
 
 	input[type="text"] {
 		border: 0;
@@ -139,7 +142,7 @@ const Subject = styled.div`
 
 const Label = styled.div`
 	display: flex;
-	height: 100%;
+	max-height: 44px;
 	align-items: center;
 	padding: 0 12px;
 	color: #6e6e6e;
@@ -149,13 +152,17 @@ const Label = styled.div`
 const Names = styled.div`
 	display: flex;
 	align-items: center;
+	max-height: 132px;
+	flex: 1;
+	width: 100%;
+	flex-wrap: wrap;
 `
 
 const Name = styled.div`
 	padding: 2px 4px;
 	background: rgb(248, 248, 248);
 	color: #919191;
-	margin-right: 4px;
+	margin: 0 4px 4px 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;

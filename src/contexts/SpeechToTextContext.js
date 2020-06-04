@@ -16,7 +16,7 @@ let audio = new AudioContext()
 export const SpeechToTextContext = createContext()
 
 const SpeechToTextContextProvider = (props) => {
-	const { setSttState, setAvatarState, setUtterance, setCortanaText, resetVoice } = useContext(GlobalContext)
+	const { setSttState, setAvatarState, setUtterance, setCortanaText, setHeardCommandText, resetVoice } = useContext(GlobalContext)
 
 	const initStt = (dictation) => {
 		recognizer = recognizerSetup(
@@ -93,6 +93,7 @@ const SpeechToTextContextProvider = (props) => {
 					break
 				case "SpeechFragmentEvent":
 					console.log("SpeechFragmentEvent: ", event.Result) // check console for other information in result
+					setHeardCommandText(null)
 					setUtterance(event.Result.Text)
 					break
 				case "SpeechEndDetectedEvent":

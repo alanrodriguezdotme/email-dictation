@@ -5,7 +5,7 @@ import PanelControls from './PanelControls'
 import { LuisContext } from '../../contexts/LuisContext'
 
 const Panel = ({ data, startExit }) => {
-	let { handleMicClick, utterance, cortanaText, recognizerStop, sttState, focus } = data
+	let { handleMicClick, utterance, cortanaText, heardCommandText, recognizerStop, sttState, focus } = data
 
 	useEffect(() => {
 		// if (sttState === null) {
@@ -18,7 +18,9 @@ const Panel = ({ data, startExit }) => {
 	}, [ utterance ])
 
 	function renderContent() {
-		if (utterance && utterance.length > 0) { 
+		if (heardCommandText) {
+			return <Command>{ heardCommandText }</Command>
+		} else if (utterance && utterance.length > 0) { 
 			return <Utterance>{ utterance }</Utterance> 
 		} else if (cortanaText) { 
 			return <CortanaText>{ cortanaText }</CortanaText> 
@@ -108,4 +110,15 @@ const CortanaText = styled.div`
 	text-align: center;
 	padding: 12px;
 	font-weight: bold;
+`
+
+const Command = styled.div`
+	width: 100%;
+	text-align: center;
+	padding: 12px;
+	
+	.heardCommand {
+		/* font-weight: bold; */
+		color: #0078d4;
+	}
 `

@@ -29,7 +29,7 @@ const LuisContextProvider = (props) => {
 						console.log({ intent, score, entities })
 
 						//check and see if we confidently know the intent, otherwise it is freeform text.
-						if (score > .8) {
+						if (score > .75) {
 							handleIntent(intent, entities, actions)
 						}
 					}
@@ -51,6 +51,7 @@ const LuisContextProvider = (props) => {
 				if (actions.focus === null) {					
 					actions.setShowCompose(true)
 					actions.setUtterance(null)
+					actions.setHeardCommandText(null)
 					actions.setFocus('body')
 					actions.recognizerStop(true)
 					actions.initStt(true)
@@ -64,9 +65,22 @@ const LuisContextProvider = (props) => {
 				break
 			
 			case 'Email.AddRecipient':
-				let newRecipients = [ ...actions.recipients ].concat(entities["Email.ContactName"])
-				console.log({ recipients: actions.recipients, entities: entities["Email.ContactName"], newRecipients })
-				actions.setRecipients(entities["Email.ContactName"])
+				if (!_.isEmpty(entities["Email.SenderName"]) || !_.isEmpty(entities["Email.ContactName"])) {
+					let toAdd = entities["Email.SenderName"] ? entities["Email.SenderName"].concat(entities["Email.ContactName"]) : entities["Email.ContactName"]
+					let newRecipients = [ ...actions.recipients ].concat(toAdd)
+					console.log({ recipients: actions.recipients, entities: toAdd, newRecipients })
+					actions.setRecipients(entities["Email.ContactName"])
+				}
+				break
+
+			case 'Email.Send':
+				actions.setShowCompose(false)
+				actions.setShowPanel(false)
+				actions.recognizerStop()
+				setTimeout(() => {
+					actions.setShowStatus(true)
+				}, 1000)
+				break
 
 			default:
 				console.log('no actions found for this intent: ' + intent)

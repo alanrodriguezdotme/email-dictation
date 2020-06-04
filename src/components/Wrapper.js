@@ -7,9 +7,10 @@ import Search from './Search/Search'
 import VoicePanel from './VoicePanel/VoicePanel'
 import { SpeechToTextContext } from '../contexts/SpeechToTextContext'
 import { LuisContext } from '../contexts/LuisContext'
+import Status from './Status'
 
 const Wrapper = () => {
-	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setRecipients } = useContext(GlobalContext)
+	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setShowPanel, setRecipients, heardCommandText, setHeardCommandText, showStatus, setShowStatus, } = useContext(GlobalContext)
 	let { initStt, handleMicClick, recognizerStop } = useContext(SpeechToTextContext)
 	let { getLuisData } = useContext(LuisContext)
 	let data = {
@@ -18,6 +19,7 @@ const Wrapper = () => {
 		handleMicClick, 
 		recognizerStop,
 		showPanel,
+		setShowPanel,
 		cortanaText, 
 		setCortanaText,
 		setSttState,
@@ -30,6 +32,10 @@ const Wrapper = () => {
 		setFocus, 
 		recipients, 
 		setRecipients,
+		heardCommandText, 
+		setHeardCommandText,
+		showStatus, 
+		setShowStatus,
 		initStt
 	}
 
@@ -53,6 +59,10 @@ const Wrapper = () => {
 			<Viewport>
 				{ showPanel && 
 					<VoicePanel data={ data } /> }
+				{ showStatus &&
+					<Status 
+						showStatus={ showStatus }
+						setShowStatus={ setShowStatus } /> }				
 				{ renderView() }
 				<Tabs currentTab={ currentTab } />
 			</Viewport>
