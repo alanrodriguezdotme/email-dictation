@@ -9,11 +9,6 @@ const Compose = ({ data }) => {
 	let [ toText, setToText ] = useState('')
 	let [ recipientNames, setRecipientNames ] = useState([])
 
-	useEffect(() => {
-		let newRecipientNames = recipientNames.concat(recipients)
-		setRecipientNames(newRecipientNames)
-	}, [recipients])
-
 	useEffect(() => {		
 		if (sttState != null && utterance != null && focus === 'subject') {
 			let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1)
@@ -23,7 +18,6 @@ const Compose = ({ data }) => {
 
 	function renderNames(names) {
 		let surnames = ['Carson', 'Patel', 'Santos', 'Larsson', 'Ngyuen', 'Darling', 'Baskins']
-		console.log(names)
 		return names.map((name, i) => {
 			if (name.indexOf(' ') >= 0) {
 				return <Name key={ 'name' + i }>{ capitalize(name) }</Name>
@@ -62,7 +56,7 @@ const Compose = ({ data }) => {
 			</Header>
 			<To>
 				<Label>To:</Label>
-				{ recipientNames && <Names>{ renderNames(recipientNames) }</Names>	}
+				{ recipientNames && <Names>{ renderNames(recipients) }</Names>	}
 				{/* <input type="text" 
 					value={ toText } 
 					onChange={ handleToTextChange }

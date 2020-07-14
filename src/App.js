@@ -1,18 +1,18 @@
 import React from 'react';
 import GlobalContextProvider from './contexts/GlobalContext';
 import Wrapper from './components/Wrapper';
-import SpeechToTextContextProvider from './contexts/SpeechToTextContext';
 import LuisContextProvider from './contexts/LuisContext';
+import STTContextProvider from './contexts/STTContext';
 
 function App() {
   return (
     <div className="App">
       <GlobalContextProvider>
-        <SpeechToTextContextProvider>
+        <STTContextProvider>
           <LuisContextProvider>
             <Wrapper />
           </LuisContextProvider>
-        </SpeechToTextContextProvider>
+        </STTContextProvider>
       </GlobalContextProvider>
     </div>
   );

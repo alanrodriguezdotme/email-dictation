@@ -5,7 +5,7 @@ import stopEarcon from '../assets/earcons/earcon-stoplistening.wav'
 
 import { GlobalContext } from './GlobalContext'
 
-let subscriptionKey = '5bb1fd777df040f18623d946d3ae2833'
+let subscriptionKey = 'b0021c09088846cd878f8267dc7be8b9'
 let serviceRegion = 'westus'
 let recognizer
 let skipLuis = false

@@ -10,99 +10,65 @@ const ComposeBody = ({ data }) => {
 	let [ utterances, setUtterances ] = useState([])
 
 	useEffect(() => {
-		console.log()
-	}, [bodyRef])
-
-	useEffect(() => {
-		console.log({focus, utterance, bodyText})
+		console.log({focus, utterances, bodyText})
 		if (focus === 'body' && utterance) {
-			if (sttState === 'SpeechDetailedPhraseEvent') {
-				commandActions(utterance)
-			} else if (sttState === 'SpeechFragmentEvent') {
-				let string = utterances.join('')
-				setBodyText(string + ' ' + utterance)
-			}
+			commandActions(utterance)
 		}
 	}, [utterance, sttState])
 
 	function commandActions(utterance) {
 		let utterancesMinusLastOne = [...utterances].slice(0, -1)
+		let unformattedUtterance = utterance.toLowerCase().replace(/\./g,'')
 
 		switch (checkForCommand(utterance)) {
 			case 'delete':
-				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				setUtterances(utterancesMinusLastOne)
-				setBodyText([ ...utterancesMinusLastOne ].join(''))
+				setBodyText([ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'bold':
-				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				utterancesMinusLastOne.push('<strong>' + [...utterances].splice(-1, 1) + '</strong>')
 				setUtterances(utterancesMinusLastOne)
-				setBodyText([ ...utterancesMinusLastOne ].join(''))
+				setBodyText([ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'italicize':
-				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				utterancesMinusLastOne.push('<i>' + [...utterances].splice(-1, 1) + '</i>')
 				setUtterances(utterancesMinusLastOne)
-				setBodyText([ ...utterancesMinusLastOne ].join(''))
+				setBodyText([ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'add':
-				setHeardCommandText(<span>Heard <span className="heardCommand">{ utterance }</span></span>)
+				console.log({recipients}, unformattedUtterance.replace('add ', ''))
+				setRecipients([ ...recipients, unformattedUtterance.replace('add ', '')])
+				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				setUtterances(utterances)
 				setBodyText(utterances.join(''))
 				break
 			default:					
-				let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
-				setUtterances([ ...utterances, scrubbedUtterance ])
-				setBodyText([ ...utterances, scrubbedUtterance ].join(''))
+				// let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
+				setHeardCommandText(null)
+				setUtterances([ ...utterances, utterance ])
+				setBodyText([ ...utterances, utterance ].join(' '))
 		}		
 	}
 
 	function checkForCommand(string) {
-		// const deleteCommands = [
-		// 	'delete',
-		// 	'undo'
-		// ]
+		let lowerCaseString = string.toLowerCase()
+		lowerCaseString = lowerCaseString.replace(/\./g,'')
+		console.log({lowerCaseString})
 
-		// const boldCommands = [
-		// 	'bold that',
-		// 	'bold this',
-		// 	'bold'
-		// ]
-
-		// const italicizeCommands = [
-		// 	'italicize'
-		// ]
-
-		// const addRecipientCommands = [
-		// 	'add'
-		// ]
-
-		if (string.startsWith('delete')) {
+		if (lowerCaseString.startsWith('delete')) {
 			return 'delete'
-		} else if (string.startsWith('bold')) {
+		} else if (lowerCaseString.startsWith('bold')) {
 			return 'bold'
-		} else if (string.startsWith('italicize') || string.startsWith('italics')) {
+		} else if (lowerCaseString.startsWith('italicize') || string.startsWith('italics')) {
 			return 'italicize'
-		} else if (string.startsWith('add')) {
+		} else if (lowerCaseString.startsWith('add')) {
 			return 'add' 
 		} else {
 			 return null
 		}
-
-		// if (new RegExp(deleteCommands.join('|')).test(string)) {
-		// 	return 'delete'
-		// } else if (new RegExp(boldCommands.join('|')).test(string)) {
-		// 	return 'bold'
-		// } else if (new RegExp(italicizeCommands.join('|')).test(string)) {
-		// 	return 'italicize'
-		// } else if (new RegExp(addRecipientCommands.join('|')).test(string)) {
-		// 	if (luisData && luisData.prediction.topIntent != 'Email.AddRecipient') {
-		// 		return 'add'
-		// 	}
-		// } else {
-		// 	return null
-		// }
 	}
 
 	function handleFocus() {

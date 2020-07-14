@@ -3,11 +3,11 @@ import styled, { keyframes } from 'styled-components'
 import { GlobalContext } from '../../contexts/GlobalContext'
 
 const Overlay = ({ startExit, setStartExit, data }) => {
-	let { recognizerStop, setFocus, setShowCompose } = data
+	let { recognizerStop, setFocus, setShowCompose, stopListening } = data
 	let { setShowPanel } = useContext(GlobalContext)
 
 	function handleOverlayClick() {
-		recognizerStop()
+		stopListening()
 		setStartExit(true)
 		setFocus(null)
 		setShowCompose(false)

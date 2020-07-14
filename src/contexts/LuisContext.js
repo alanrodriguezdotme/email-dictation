@@ -2,13 +2,11 @@ import React, { useContext, createContext, useEffect } from 'react'
 import * as _ from 'underscore'
 
 import { GlobalContext } from '../contexts/GlobalContext'
-import { SpeechToTextContext } from './SpeechToTextContext'
 
 export const LuisContext = createContext()
 
 const LuisContextProvider = (props) => {
 	let { setLuisData, resetVoice } = useContext(GlobalContext)
-	let { handleMicClick, recognizerStop, initStt } = useContext(SpeechToTextContext)
 
 	const getLuisData = (utterance, actions) => {
 		// Alan's LUIS account
@@ -53,9 +51,7 @@ const LuisContextProvider = (props) => {
 					actions.setUtterance(null)
 					actions.setHeardCommandText(null)
 					actions.setFocus('body')
-					actions.recognizerStop(true)
-					actions.initStt(true)
-					actions.handleMicClick(actions)
+					actions.startListening(actions, false, true)
 					actions.setCortanaText("What's your message?")
 
 					if (entities["Email.ContactName"]) {

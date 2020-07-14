@@ -8,16 +8,18 @@ import VoicePanel from './VoicePanel/VoicePanel'
 import { SpeechToTextContext } from '../contexts/SpeechToTextContext'
 import { LuisContext } from '../contexts/LuisContext'
 import Status from './Status'
+import { STTContext } from '../contexts/STTContext'
 
 const Wrapper = () => {
 	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setShowPanel, setRecipients, heardCommandText, setHeardCommandText, showStatus, setShowStatus, } = useContext(GlobalContext)
-	let { initStt, handleMicClick, recognizerStop } = useContext(SpeechToTextContext)
+	let { initSTT, startListening, stopListening } = useContext(STTContext)
 	let { getLuisData } = useContext(LuisContext)
 	let data = {
 		utterance,
 		setUtterance,
-		handleMicClick, 
-		recognizerStop,
+		initSTT,
+		startListening,
+		stopListening,
 		showPanel,
 		setShowPanel,
 		cortanaText, 
@@ -36,12 +38,7 @@ const Wrapper = () => {
 		setHeardCommandText,
 		showStatus, 
 		setShowStatus,
-		initStt
 	}
-
-	useEffect(() => {
-		initStt()
-	}, [])
 
 	function renderView() {
 		switch(currentTab) {
