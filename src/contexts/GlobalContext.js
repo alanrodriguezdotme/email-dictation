@@ -15,6 +15,7 @@ const GlobalContextProvider = (props) => {
 	let [ recipients, setRecipients ] = useState([])
 	let [ heardCommandText, setHeardCommandText ] = useState(null)
 	let [ showStatus, setShowStatus ] = useState(true)
+	let [ showInstructions, setShowInstructions ] = useState(true)
 
 	const resetVoice = () => {
 		setCortanaText(null)
@@ -39,6 +40,7 @@ const GlobalContextProvider = (props) => {
 			recipients, setRecipients,
 			heardCommandText, setHeardCommandText,
 			showStatus, setShowStatus,
+			showInstructions, setShowInstructions,
 			resetVoice
 		}}>
 			{ props.children }

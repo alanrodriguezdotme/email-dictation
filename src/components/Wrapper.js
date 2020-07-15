@@ -9,9 +9,10 @@ import { SpeechToTextContext } from '../contexts/SpeechToTextContext'
 import { LuisContext } from '../contexts/LuisContext'
 import Status from './Status'
 import { STTContext } from '../contexts/STTContext'
+import Instructions from './Instructions/Instructions'
 
 const Wrapper = () => {
-	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setShowPanel, setRecipients, heardCommandText, setHeardCommandText, showStatus, setShowStatus, } = useContext(GlobalContext)
+	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setShowPanel, setRecipients, heardCommandText, setHeardCommandText, showStatus, setShowStatus, showInstructions } = useContext(GlobalContext)
 	let { initSTT, startListening, stopListening } = useContext(STTContext)
 	let { getLuisData } = useContext(LuisContext)
 	let data = {
@@ -37,7 +38,7 @@ const Wrapper = () => {
 		heardCommandText, 
 		setHeardCommandText,
 		showStatus, 
-		setShowStatus,
+		setShowStatus
 	}
 
 	function renderView() {
@@ -54,6 +55,8 @@ const Wrapper = () => {
 	return (
 		<Container>
 			<Viewport>
+				{ showInstructions &&
+					<Instructions /> }
 				{ showPanel && 
 					<VoicePanel data={ data } /> }
 				{ showStatus &&

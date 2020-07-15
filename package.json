@@ -21,7 +21,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://cortanadesign.azurewebsites.net/projects/EmailDictation/",
+  "homepage": "http://alanrodriguez.me/projects/outlook-email-dictation/",
   "eslintConfig": {
     "extends": "react-app"
   },

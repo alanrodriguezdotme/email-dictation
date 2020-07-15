@@ -44,6 +44,12 @@ const STTContextProvider = (props) => {
 		setSttState("listening")
 		console.log("listening...")
 
+		recognizer.recognized = (sender, event) => {
+			setSttState("recognized")
+			setUtterance(event.result.text)
+			console.log(event.result.text)
+		}
+
 		if (continuous) {
 			recognizer.startContinuousRecognitionAsync(() => {
 				console.log("listening continuously...")
@@ -67,12 +73,6 @@ const STTContextProvider = (props) => {
 					stopListening()
 				} 
 			)
-		}
-
-		recognizer.recognized = (sender, event) => {
-			setSttState("recognized")
-			setUtterance(event.result.text)
-			console.log(event.result.text)
 		}
 	}
 
