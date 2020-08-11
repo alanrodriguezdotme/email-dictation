@@ -51,8 +51,8 @@ const LuisContextProvider = (props) => {
 					actions.setUtterance(null)
 					actions.setHeardCommandText(null)
 					actions.setFocus('body')
-					actions.startListening(actions, false, true)
 					actions.setCortanaText("What's your message?")
+					actions.startListening(actions, false, true)
 
 					if (entities["Email.ContactName"]) {
 						actions.setRecipients(entities["Email.ContactName"])

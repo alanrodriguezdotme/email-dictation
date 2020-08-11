@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import styled from 'styled-components'
 
 const PanelControls = ({ data }) => {
-	let { handleMicClick, sttState, recognizerStop, focus, initStt } = data
+	let { startListening, sttState, stopListening, focus, initStt } = data
 
 	function renderMicButton() {
 		return (
@@ -16,14 +16,12 @@ const PanelControls = ({ data }) => {
 	}
 
 	function handleMicButtonClick() {
-		if (sttState != null) { recognizerStop() }
+		if (sttState != null) { stopListening() }
 		else {
 			if (focus === 'body') {
-				recognizerStop(true)
-				initStt(true)
-				handleMicClick(data, true)
+				startListening(data, true, true)
 			} else {
-				handleMicClick(data, true)
+				startListening(data, false, false)
 			}
 		} 
 	}

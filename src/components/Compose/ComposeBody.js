@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ReactQuill from 'react-quill'
 import * as _ from 'underscore'
+import Sandbox from '@open-studio/sandbox'
 
 const ComposeBody = ({ data }) => {
 	const { setFocus, setCortanaText, focus, utterance, setHeardCommandText, setRecipients, recipients, luisData, sttState } = data
@@ -19,37 +20,38 @@ const ComposeBody = ({ data }) => {
 	function commandActions(utterance) {
 		let utterancesMinusLastOne = [...utterances].slice(0, -1)
 		let unformattedUtterance = utterance.toLowerCase().replace(/\./g,'')
+		let inApp = Sandbox.isInApp
 
 		switch (checkForCommand(utterance)) {
 			case 'delete':
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				setUtterances(utterancesMinusLastOne)
-				setBodyText([ ...utterancesMinusLastOne ].join(' '))
+				setBodyText(inApp ? utterance : [ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'bold':
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				utterancesMinusLastOne.push('<strong>' + [...utterances].splice(-1, 1) + '</strong>')
 				setUtterances(utterancesMinusLastOne)
-				setBodyText([ ...utterancesMinusLastOne ].join(' '))
+				setBodyText(inApp ? utterance : [ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'italicize':
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				utterancesMinusLastOne.push('<i>' + [...utterances].splice(-1, 1) + '</i>')
 				setUtterances(utterancesMinusLastOne)
-				setBodyText([ ...utterancesMinusLastOne ].join(' '))
+				setBodyText(inApp ? utterance : [ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'add':
 				console.log({recipients}, unformattedUtterance.replace('add ', ''))
 				setRecipients([ ...recipients, unformattedUtterance.replace('add ', '')])
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				setUtterances(utterances)
-				setBodyText(utterances.join(''))
+				setBodyText(inApp ? utterance : utterances.join(''))
 				break
 			default:					
 				// let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
 				setHeardCommandText(null)
 				setUtterances([ ...utterances, utterance ])
-				setBodyText([ ...utterances, utterance ].join(' '))
+				setBodyText(inApp ? utterance : [ ...utterances, utterance ].join(' '))
 		}		
 	}
 
@@ -58,16 +60,30 @@ const ComposeBody = ({ data }) => {
 		lowerCaseString = lowerCaseString.replace(/\./g,'')
 		console.log({lowerCaseString})
 
-		if (lowerCaseString.startsWith('delete')) {
-			return 'delete'
-		} else if (lowerCaseString.startsWith('bold')) {
-			return 'bold'
-		} else if (lowerCaseString.startsWith('italicize') || string.startsWith('italics')) {
-			return 'italicize'
-		} else if (lowerCaseString.startsWith('add')) {
-			return 'add' 
+		if (Sandbox.isInApp) {
+			if (lowerCaseString.endsWith('delete')) {
+				return 'delete'
+			} else if (lowerCaseString.endsWith('bold')) {
+				return 'bold'
+			} else if (lowerCaseString.endsWith('italicize') || string.endsWith('italics')) {
+				return 'italicize'
+			} else if (lowerCaseString.endsWith('add')) {
+				return 'add' 
+			} else {
+				 return null
+			}
 		} else {
-			 return null
+			if (lowerCaseString.startsWith('delete')) {
+				return 'delete'
+			} else if (lowerCaseString.startsWith('bold')) {
+				return 'bold'
+			} else if (lowerCaseString.startsWith('italicize') || string.startsWith('italics')) {
+				return 'italicize'
+			} else if (lowerCaseString.startsWith('add')) {
+				return 'add' 
+			} else {
+				 return null
+			}
 		}
 	}
 
