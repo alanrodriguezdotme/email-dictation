@@ -4,7 +4,7 @@ import { GlobalContext } from './GlobalContext'
 import Sandbox, { HapticType } from '@open-studio/sandbox'
 import { result } from 'underscore'
 
-let subscriptionKey = 'ab3918c52b51410cae05d545fe5ce17f'
+let subscriptionKey = 'SUBSCRIPTION_KEY'
 let authEndpoint = 'https://westus.api.cognitive.microsoft.com/sts/v1.0/issuetoken'
 let authToken
 let serviceRegion = "westus"
@@ -16,7 +16,7 @@ export const STTContext = createContext()
 const STTContextProvider = (props) => {
 	const { log, performHaptic } = Sandbox.system
 	const { isRunning, toggleRunning } = Sandbox.speech
-	const { setSttState, setUtterance, utterance, setHeardCommandText } = useContext(GlobalContext)
+	const { setSttState, setUtterance, setSandboxUtterance } = useContext(GlobalContext)
 	let [ isInApp, setIsInApp ] = useState(false)
 
 	const requestAuthToken = () => {
@@ -100,43 +100,20 @@ const STTContextProvider = (props) => {
 		setUtterance(null)
 	}
 
-	function getStringDiff(longerString, shorterString) {
-		return longerString.split(shorterString).join('')
-	}
-
-	const debounce = (func, wait, immediate) => {
-		let timeout;
-		return function () {
-			const context = this;
-			const args = arguments;
-			const later = function () {
-				timeout = null;
-				if (!immediate) func.apply(context, args);
-			};
-			const callNow = immediate && !timeout;
-			clearTimeout(timeout);
-			timeout = setTimeout(later, wait);
-			if (callNow) func.apply(context, args);
-		};
-	};
-
 	useEffect(() => {
 		setIsInApp(Sandbox.isInApp)
 
 		// do something with results from iOS STT
 		Sandbox.speech.setOnResultsCallback((results) => {
+			let { sandboxUtterance, focus, getLuisData } = callbacksForSandbox?.actions
 			if (results.text && isRunning()) {
-				setUtterance(results.text)
-			} else if (results.text && !isRunning()) {
-				callbacksForSandbox.actions.getLuisData(results.text, callbacksForSandbox.actions)
+				setSandboxUtterance(results.text)
+				if (focus != 'body') {
+					setUtterance(results.text)
+				}
+			} else if (results.text && !isRunning() && focus != 'body') {
+				getLuisData(results.text, callbacksForSandbox.actions)
 			}
-		})
-
-		Sandbox.speech.setInputLevelCallback((input) => {
-			debounce(toggleRunning, 6000, false)
-			if (input > 0) {
-				
-			} 
 		})
 
 		Sandbox.speech.setIsRunningCallback((result) => {

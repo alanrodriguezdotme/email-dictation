@@ -10,7 +10,7 @@ const LuisContextProvider = (props) => {
 
 	const getLuisData = (utterance, actions) => {
 		// Alan's LUIS account
-		const LUIS_URL = 'https://westus.api.cognitive.microsoft.com/luis/prediction/v3.0/apps/b826c847-24a5-4fca-ac34-60a52054bc10/slots/staging/predict?subscription-key=7b66646eb6344aea8e22592a102bcc6d&verbose=true&show-all-intents=true&log=true&query='
+		const LUIS_URL = 'LUIS_URL'
 
 		return new Promise((resolve, reject) => {
 			fetch(LUIS_URL + utterance)

@@ -11,7 +11,7 @@ import { STTContext } from '../contexts/STTContext'
 import Instructions from './Instructions/Instructions'
 
 const Wrapper = () => {
-	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setShowPanel, setRecipients, heardCommandText, setHeardCommandText, showStatus, setShowStatus, showInstructions } = useContext(GlobalContext)
+	let { currentTab, showPanel, utterance, setUtterance, cortanaText, setCortanaText, sttState, setSttState, showCompose, setShowCompose, luisData, focus, setFocus, recipients, setShowPanel, setRecipients, heardCommandText, setHeardCommandText, showStatus, setShowStatus, sandboxUtterance, setSandboxUtterance, showInstructions, debounce } = useContext(GlobalContext)
 	let { initSTT, startListening, stopListening } = useContext(STTContext)
 	let { getLuisData } = useContext(LuisContext)
 	let data = {
@@ -37,7 +37,10 @@ const Wrapper = () => {
 		heardCommandText, 
 		setHeardCommandText,
 		showStatus, 
-		setShowStatus
+		setShowStatus,
+		sandboxUtterance,
+		setSandboxUtterance,
+		debounce
 	}
 
 	function renderView() {

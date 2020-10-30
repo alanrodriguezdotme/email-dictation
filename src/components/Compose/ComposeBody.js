@@ -5,53 +5,79 @@ import * as _ from 'underscore'
 import Sandbox from '@open-studio/sandbox'
 
 const ComposeBody = ({ data }) => {
-	const { setFocus, setCortanaText, focus, utterance, setHeardCommandText, setRecipients, recipients, luisData, sttState } = data
+	const { setFocus, setCortanaText, focus, utterance, setHeardCommandText, setRecipients, recipients, luisData, sttState, debounce, sandboxUtterance } = data
 	const bodyRef = useRef(null)
 	let [ bodyText, setBodyText ] = useState('')
 	let [ utterances, setUtterances ] = useState([])
 
 	useEffect(() => {
-		console.log({focus, utterances, bodyText})
-		if (focus === 'body' && utterance) {
+		if (focus === 'body' && utterance && !Sandbox.isInApp) {
+			console.log({focus, utterances, bodyText})
 			commandActions(utterance)
 		}
 	}, [utterance, sttState])
 
+	useEffect(() => {
+		if (focus === 'body' && Sandbox.isInApp) {
+			if (sandboxUtterance.split(" ").length > 1 && getWordFromEnd(sandboxUtterance, 0) != getWordFromEnd(sandboxUtterance, 1)) {
+				commandActions(getWordFromEnd(sandboxUtterance, 0))
+			} else if (containsCommand(getWordFromEnd(sandboxUtterance, 0))) {
+				commandActions(getWordFromEnd(sandboxUtterance, 0))
+			}
+		}
+	}, [sandboxUtterance])
+
+	function getWordFromEnd(string, offset) {
+		let n = string.split(" ")
+		return n[n.length - (offset + 1)]
+	}
+
+	function containsCommand(string) {
+		if (
+			string === 'delete' || 
+			string === 'bold ' ||
+			string === 'italicize'
+		) {
+			return true
+		} else {
+			return false
+		}
+	}
+
 	function commandActions(utterance) {
 		let utterancesMinusLastOne = [...utterances].slice(0, -1)
 		let unformattedUtterance = utterance.toLowerCase().replace(/\./g,'')
-		let inApp = Sandbox.isInApp
 
 		switch (checkForCommand(utterance)) {
 			case 'delete':
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				setUtterances(utterancesMinusLastOne)
-				setBodyText(inApp ? utterance : [ ...utterancesMinusLastOne ].join(' '))
+				setBodyText([ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'bold':
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				utterancesMinusLastOne.push('<strong>' + [...utterances].splice(-1, 1) + '</strong>')
 				setUtterances(utterancesMinusLastOne)
-				setBodyText(inApp ? utterance : [ ...utterancesMinusLastOne ].join(' '))
+				setBodyText([ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'italicize':
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				utterancesMinusLastOne.push('<i>' + [...utterances].splice(-1, 1) + '</i>')
 				setUtterances(utterancesMinusLastOne)
-				setBodyText(inApp ? utterance : [ ...utterancesMinusLastOne ].join(' '))
+				setBodyText([ ...utterancesMinusLastOne ].join(' '))
 				break
 			case 'add':
 				console.log({recipients}, unformattedUtterance.replace('add ', ''))
 				setRecipients([ ...recipients, unformattedUtterance.replace('add ', '')])
 				setHeardCommandText(<span>Heard <span className="heardCommand">{ unformattedUtterance }</span></span>)
 				setUtterances(utterances)
-				setBodyText(inApp ? utterance : utterances.join(''))
+				setBodyText(utterances.join(''))
 				break
 			default:					
 				// let scrubbedUtterance = utterance.charAt(0).toUpperCase() + utterance.slice(1) + '. '
 				setHeardCommandText(null)
 				setUtterances([ ...utterances, utterance ])
-				setBodyText(inApp ? utterance : [ ...utterances, utterance ].join(' '))
+				setBodyText([ ...utterances, utterance ].join(' '))
 		}		
 	}
 
@@ -61,13 +87,17 @@ const ComposeBody = ({ data }) => {
 		console.log({lowerCaseString})
 
 		if (Sandbox.isInApp) {
+			if (lowerCaseString.length > 20) { 
+				lowerCaseString = lowerCaseString.slice(lowerCaseString.length - 20) 
+			}
+
 			if (lowerCaseString.endsWith('delete')) {
 				return 'delete'
 			} else if (lowerCaseString.endsWith('bold')) {
 				return 'bold'
 			} else if (lowerCaseString.endsWith('italicize') || string.endsWith('italics')) {
 				return 'italicize'
-			} else if (lowerCaseString.endsWith('add')) {
+			} else if (lowerCaseString.includes('add')) {
 				return 'add' 
 			} else {
 				 return null

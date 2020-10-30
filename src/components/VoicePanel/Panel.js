@@ -1,14 +1,20 @@
 import React, { useEffect, useContext, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
+import Sandbox from '@open-studio/sandbox'
 
 import PanelTips from './PanelTips'
 import PanelControls from './PanelControls'
 
 const Panel = ({ data, startExit }) => {
-	let { startListening, utterance, cortanaText, heardCommandText, recognizerStop, sttState, focus } = data
+	let { startListening, stopListening, utterance, cortanaText, heardCommandText, recognizerStop, sttState, focus, debounce } = data
 
 	useEffect(() => {
 		startListening(data, false, false)
+		if (Sandbox.isInApp && focus != 'body') {
+			setTimeout(() => {
+				stopListening()
+			}, 4500)
+		}
 	}, [])
 
 	useEffect(() => {

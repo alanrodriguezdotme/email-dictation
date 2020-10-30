@@ -7,6 +7,15 @@ const Instructions = () => {
 
 	function handleButtonClick() {
 		setShowInstructions(false)
+		// let AudioContext = window.AudioContext // Default
+		// 	|| window.webkitAudioContext // Safari and old versions of Chrome
+		// 	|| false; 
+
+		// if (AudioContext) {
+		// 	let ctx = new AudioContext()
+		// 	ctx.resume()
+		// 	console.log(ctx)
+		// }
 	}
 
 	return (

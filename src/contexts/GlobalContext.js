@@ -16,7 +16,8 @@ const GlobalContextProvider = (props) => {
 	let [ heardCommandText, setHeardCommandText ] = useState(null)
 	let [ showStatus, setShowStatus ] = useState(true)
 	let [ showInstructions, setShowInstructions ] = useState(true)
-
+	let [ sandboxUtterance, setSandboxUtterance ] = useState([])
+	
 	const resetVoice = () => {
 		setCortanaText(null)
 		setUtterance(null)
@@ -24,6 +25,22 @@ const GlobalContextProvider = (props) => {
 		setSttState(null)
 		setLuisData(null)
 		setHeardCommandText(null)
+	}
+
+	const debounce = (func, wait, immediate) => {
+		let timeout;
+		return function () {
+			const context = this
+			const args = arguments
+			const later = function () {
+				timeout = null;
+				if (!immediate) func.apply(context, args)
+			}
+			const callNow = immediate && !timeout
+			clearTimeout(timeout)
+			timeout = setTimeout(later, wait)
+			if (callNow) func.apply(context, args)
+		}
 	}
 
 	return (
@@ -41,7 +58,9 @@ const GlobalContextProvider = (props) => {
 			heardCommandText, setHeardCommandText,
 			showStatus, setShowStatus,
 			showInstructions, setShowInstructions,
-			resetVoice
+			sandboxUtterance, setSandboxUtterance,
+			resetVoice,
+			debounce
 		}}>
 			{ props.children }
 		</GlobalContext.Provider>
